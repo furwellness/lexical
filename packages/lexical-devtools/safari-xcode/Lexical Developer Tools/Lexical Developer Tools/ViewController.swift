@@ -1,15 +1,16 @@
-//
-//  ViewController.swift
-//  Lexical Developer Tools
-//
-//  Created by Vladlen Fedosov on 5/14/24.
-//
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
 
 import Cocoa
 import SafariServices
 import WebKit
 
-let extensionBundleIdentifier = "dev.lexical.Lexical-Developer-Tools.Extension"
+let extensionBundleIdentifier = "com.epam.lexical.developerTools.safariExt"
 
 class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHandler {
 

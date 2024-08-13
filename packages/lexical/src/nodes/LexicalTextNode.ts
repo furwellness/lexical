@@ -21,6 +21,7 @@ import type {
   SerializedLexicalNode,
 } from '../LexicalNode';
 import type {BaseSelection, RangeSelection} from '../LexicalSelection';
+import type {ElementNode} from './LexicalElementNode';
 
 import {IS_FIREFOX} from 'shared/environment';
 import invariant from 'shared/invariant';
@@ -274,7 +275,14 @@ function wrapElementWith(
   return el;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export interface TextNode {
+  getTopLevelElement(): ElementNode | null;
+  getTopLevelElementOrThrow(): ElementNode;
+}
+
 /** @noInheritDoc */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class TextNode extends LexicalNode {
   ['constructor']!: KlassConstructor<typeof TextNode>;
   __text: string;
@@ -927,7 +935,7 @@ export class TextNode extends LexicalNode {
       return [self];
     }
     const firstPart = parts[0];
-    const parent = self.getParentOrThrow();
+    const parent = self.getParent();
     let writableNode;
     const format = self.getFormat();
     const style = self.getStyle();
@@ -997,23 +1005,25 @@ export class TextNode extends LexicalNode {
     }
 
     // Insert the nodes into the parent's children
-    internalMarkSiblingsAsDirty(this);
-    const writableParent = parent.getWritable();
-    const insertionIndex = this.getIndexWithinParent();
-    if (hasReplacedSelf) {
-      writableParent.splice(insertionIndex, 0, splitNodes);
-      this.remove();
-    } else {
-      writableParent.splice(insertionIndex, 1, splitNodes);
-    }
+    if (parent !== null) {
+      internalMarkSiblingsAsDirty(this);
+      const writableParent = parent.getWritable();
+      const insertionIndex = this.getIndexWithinParent();
+      if (hasReplacedSelf) {
+        writableParent.splice(insertionIndex, 0, splitNodes);
+        this.remove();
+      } else {
+        writableParent.splice(insertionIndex, 1, splitNodes);
+      }
 
-    if ($isRangeSelection(selection)) {
-      $updateElementSelectionOnCreateDeleteNode(
-        selection,
-        parent,
-        insertionIndex,
-        partsLength - 1,
-      );
+      if ($isRangeSelection(selection)) {
+        $updateElementSelectionOnCreateDeleteNode(
+          selection,
+          parent,
+          insertionIndex,
+          partsLength - 1,
+        );
+      }
     }
 
     return splitNodes;
