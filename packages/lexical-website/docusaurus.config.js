@@ -281,6 +281,7 @@ const config = {
         docs: {
           beforeDefaultRemarkPlugins: [slugifyPlugin],
           editUrl: `${GITHUB_REPO_URL}/tree/main/packages/lexical-website/`,
+          exclude: ['/error'],
           path: 'docs',
           sidebarItemsGenerator,
           sidebarPath: require.resolve('./sidebars.js'),
